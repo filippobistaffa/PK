@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+if [ "$#" -eq 0 ]
+then
+	echo "Usage: $0 INPUTFILE"
+	exit
+fi
+
+N=`sed '1q;d' $1`	# Number of agents
+K=`sed '2q;d' $1`	# Maximum cardinality
+SEED=`sed '3q;d' $1`	# Seed
+
+tmp=`mktemp`
+echo "#define N $N" > $tmp
+echo "#define K $K" >> $tmp
+echo "#define SEED $SEED" >> $tmp
+echo "#define INPUTFILE \"$1\"" >> $tmp
+
+if [ ! -f instance.h ]; then
+	mv $tmp "instance.h"
+else
+	md5a=`md5sum instance.h | cut -d\  -f 1`
+	md5b=`md5sum $tmp | cut -d\  -f 1`
+
+	if [ $md5a != $md5b ]
+	then
+		mv $tmp "instance.h"
+	else
+		rm $tmp
+	fi
+fi
+
+make
+time -p ./pk
