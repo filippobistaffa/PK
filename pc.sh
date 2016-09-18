@@ -38,4 +38,4 @@ else
 fi
 
 make -j
-time -p ./pk
+time -p ./pc
