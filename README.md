@@ -1,6 +1,6 @@
 PC: an Algorithm to Compute Core-Stable Payments for Social Ridesharing
 ===================
-This branch contains the code to compute a core-stable allocation for Social Ridesharing. This code is not scalable (since computing payments in the core is untractable), and must be used only for experimental purposes.
+This branch contains the code to compute a [Core](https://en.wikipedia.org/wiki/Core_(game_theory))-stable allocation for Social Ridesharing. This code is not scalable (since computing payments in the core is untractable), and must be used only for experimental purposes.
 
 Requirements
 ----------
