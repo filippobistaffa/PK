@@ -41,11 +41,14 @@ all: pk
 
 -include ${DEPSUBDIR}/*.d
 
-pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o
+pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o
 	@${ECHOLD} pk
 	@${CMP} ${OPT} $^ ${LINK} -o ${OUT}
 
 ${COBJSUBDIR}/io.o: io.cpp
+	@$(compilec)
+
+${COBJSUBDIR}/sp.o: sp.cpp
 	@$(compilec)
 
 ${COBJSUBDIR}/pk.o: pk.cpp

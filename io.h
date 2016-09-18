@@ -12,6 +12,6 @@ void printbuf(const type *buf, unsigned n, const char *name = NULL) {
 	printf("]\n");
 }
 
-agent readcs(agent *csbuf);
+agent readcs(agent *csbuf, chunk *cars);
 
 #endif /* IO_H_ */

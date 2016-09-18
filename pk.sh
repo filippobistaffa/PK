@@ -37,5 +37,5 @@ else
 	fi
 fi
 
-make
+make -j
 time -p ./pk
