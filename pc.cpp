@@ -149,12 +149,12 @@ int main(int argc, char *argv[]) {
 		ostr.str("");
 	}
 
+	// Efficiency constraints
+
 	for (agent i = 0; i < nc; i++) {
 		IloExpr expr(env);
-		for (agent j = 0; j < csbuf[i * (K + 1)]; j++) {
-			//printf("%u\n", csbuf[i * (K + 1) + j + 1]);
+		for (agent j = 0; j < csbuf[i * (K + 1)]; j++)
 			expr += x[csbuf[i * (K + 1) + j + 1]];
-		}
 		model.add(expr == 0.01 * COALVALUE(csbuf + i * (K + 1), GET(cars, i), sp));
 		expr.end();
 	}
