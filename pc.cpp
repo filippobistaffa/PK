@@ -27,10 +27,8 @@ int main(int argc, char *argv[]) {
 	printf("%u coalitions\n", nc);
 	meter *sp = createsp();
 
-	//for (agent i = 0; i < nc; i++) {
-	//	printbuf(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)]);
-	//	printf("%u\n", COALVALUE(csbuf + i * (K + 1), GET(dr, csbuf[i * (K + 1) + 1]), sp));
-	//}
+	for (agent i = 0; i < nc; i++)
+		printc(csbuf + i * (K + 1), COALVALUE(csbuf + i * (K + 1), GET(dr, csbuf[i * (K + 1) + 1]), sp));
 
 	IloEnv env;
 	IloModel model(env);
