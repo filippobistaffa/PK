@@ -140,6 +140,7 @@ int main(int argc, char *argv[]) {
 
 	IloEnv env;
 	IloModel model(env);
+	IloNumVarArray x(env);
 	env.end();
 
 	free(csbuf);
