@@ -22,6 +22,8 @@
 
 using namespace std;
 
+#include "iqsort.h"
+#include "slyce.h"
 #include "value.h"
 #include "io.h"
 #include "sp.h"

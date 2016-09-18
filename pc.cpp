@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 
 	agent *csbuf = (agent *)malloc(sizeof(agent) * (K + 1) * N);
 	agent *adj = (agent *)malloc(sizeof(agent) * N * N);
-	chunk cars[C] = {0};
+	chunk dr[C] = {0};
 
 	// Read input file
 
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	fgets(line, MAXLINE, f);
 	fgets(line, MAXLINE, f);
 	edge ne = readadj(adj, f);
-	agent nc = readcs(csbuf, cars, f);
+	agent nc = readcs(csbuf, dr, f);
 	fclose(f);
 
 	printf("%u edges\n", ne);
@@ -27,10 +27,12 @@ int main(int argc, char *argv[]) {
 	printf("%u coalitions\n", nc);
 	meter *sp = createsp();
 
-	for (agent i = 0; i < nc; i++) {
-		printbuf(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)]);
-		printf("%u\n", COALVALUE(csbuf + i * (K + 1), GET(cars, i), sp));
-	}
+	//for (agent i = 0; i < nc; i++) {
+	//	printbuf(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)]);
+	//	printf("%u\n", COALVALUE(csbuf + i * (K + 1), GET(dr, csbuf[i * (K + 1) + 1]), sp));
+	//}
+
+	coalrat(adj, dr, sp);
 
 	IloEnv env;
 	IloModel model(env);
@@ -49,7 +51,7 @@ int main(int argc, char *argv[]) {
 		IloExpr expr(env);
 		for (agent j = 0; j < csbuf[i * (K + 1)]; j++)
 			expr += x[csbuf[i * (K + 1) + j + 1]];
-		model.add(expr == 0.01 * COALVALUE(csbuf + i * (K + 1), GET(cars, i), sp));
+		model.add(expr == 0.01 * COALVALUE(csbuf + i * (K + 1), GET(dr, csbuf[i * (K + 1) + 1]), sp));
 		expr.end();
 	}
 

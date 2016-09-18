@@ -22,6 +22,6 @@ edge readadj(agent *adj, FILE *f);
 
 // Reads the solution coalition structure
 
-agent readcs(agent *csbuf, chunk *cars, FILE *f);
+agent readcs(agent *csbuf, chunk *dr, FILE *f);
 
 #endif /* IO_H_ */
