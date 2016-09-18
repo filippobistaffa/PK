@@ -180,8 +180,11 @@ __attribute__((always_inline)) inline
 void coalition(agent *c, const chunk *dr, const meter *sp, IloEnv env, IloFloatVarArray x, IloModel model) {
 
 	IloExpr expr(env);
-	for (agent j = 0; j < *c; j++)
+	for (agent j = 0; j < *c; j++) {
 		expr += x[c[j + 1]];
+		printf("%sx[%u] ", j ? "+ " : "", c[j + 1]);
+	}
+	printf("<= %.2f\n", 0.01 * COALVALUE(c, GET(dr, c[1]), sp));
 	model.add(expr <= 0.01 * COALVALUE(c, GET(dr, c[1]), sp));
 	expr.end();
 }
@@ -191,8 +194,8 @@ size_t slyce(agent *r, agent *f, agent m, const agent *adj, agent d, const chunk
 	size_t ret = 0;
 
 	if (*r && (d || *r == 1)) {
+		printc(r, COALVALUE(r, GET(dr, *(r + 1)), sp));
 		coalition(r, dr, sp, env, x, model);
-		//printc(r, COALVALUE(r, GET(dr, *(r + 1)), sp));
 		ret++;
 	}
 
