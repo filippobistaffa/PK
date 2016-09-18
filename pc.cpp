@@ -139,6 +139,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	IloEnv env;
+	IloModel model(env);
+	env.end();
 
 	free(csbuf);
 	free(adj);
