@@ -4,7 +4,7 @@ This branch contains the code to compute a [Core](https://en.wikipedia.org/wiki/
 
 Requirements
 ----------
-PC requires `g++` to compile, and relies on [IBM CPLEX](https://www-01.ibm.com/software/commerce/optimization/cplex-optimizer) to compute a Core-stable payment allocation. In order to compile againt CPLEX, `INC` and `LDIR` inside [`Makefile`](https://github.com/filippobistaffa/PK/blob/core/Makefile)  must be set to point to the `include` and `lib` folders of CPLEX.
+PC requires `g++` to compile, and relies on [IBM CPLEX](https://www-01.ibm.com/software/commerce/optimization/cplex-optimizer) to compute a Core-stable payment allocation. In order to compile against CPLEX, `INC` and `LDIR` inside [`Makefile`](https://github.com/filippobistaffa/PK/blob/core/Makefile)  must be set to point to the `include` and `lib` folders of CPLEX.
 
 Execution
 ----------
