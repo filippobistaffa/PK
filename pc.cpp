@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
 	// Coalitional rationality constraints
 
-	coalrat(env, x, adj, dr, sp);
+	coalrat(adj, dr, sp, env, x, model);
 
 	// Efficiency constraints
 
