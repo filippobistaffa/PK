@@ -6,6 +6,12 @@ then
 	exit
 fi
 
+if [ ! -f "$1" ]
+then
+	echo "$1 not found"
+	exit
+fi
+
 N=`sed '1q;d' $1`	# Number of agents
 K=`sed '2q;d' $1`	# Maximum cardinality
 SEED=`sed '3q;d' $1`	# Seed
@@ -16,7 +22,8 @@ echo "#define K $K" >> $tmp
 echo "#define SEED $SEED" >> $tmp
 echo "#define INPUTFILE \"$1\"" >> $tmp
 
-if [ ! -f instance.h ]; then
+if [ ! -f instance.h ]
+then
 	mv $tmp "instance.h"
 else
 	md5a=`md5sum instance.h | cut -d\  -f 1`
