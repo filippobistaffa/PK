@@ -3,6 +3,7 @@
 
 #include <omp.h>
 #include <stdio.h>
+#include <float.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -33,6 +34,8 @@
 #define R3 6
 
 #define C CEILBPC(N)
+
+using namespace std;
 
 #include "io.h"
 #include "sp.h"

@@ -140,11 +140,40 @@ int main(int argc, char *argv[]) {
 
 	IloEnv env;
 	IloModel model(env);
-	IloNumVarArray x(env);
+	IloFloatVarArray x(env, N);
+	std::ostringstream ostr;
 
-	for (agent i = 0; i < N; i++)
-		x.add(IloNumVar(env)); // Payments are positive, hence the default range [0, +∞)
+	for (agent i = 0; i < N; i++) {
+		ostr << "x[" << i << "]";
+		x[i] = IloFloatVar(env, 0.0, FLT_MAX, ostr.str().c_str());
+		ostr.str("");
+	}
 
+	for (agent i = 0; i < nc; i++) {
+		IloExpr expr(env);
+		for (agent j = 0; j < csbuf[i * (K + 1)]; j++) {
+			//printf("%u\n", csbuf[i * (K + 1) + j + 1]);
+			expr += x[csbuf[i * (K + 1) + j + 1]];
+		}
+		model.add(expr == 0.01 * COALVALUE(csbuf + i * (K + 1), GET(cars, i), sp));
+		expr.end();
+	}
+
+	IloCplex cplex(model);
+	IloTimer timer(env);
+	timer.start();
+
+	if (!cplex.solve()) {
+		env.error() << "Failed to optimize model." << endl;
+		exit(1);
+	}
+
+	timer.stop();
+	IloNumArray xval(env);
+	env.out() << "Solution status = " << cplex.getStatus() << endl;
+	env.out() << "Elapsed time = " << timer.getTime() << endl;
+	cplex.getValues(xval, x);
+	env.out() << "Payments = " << xval << endl;
 	env.end();
 
 	free(csbuf);

@@ -12,7 +12,7 @@ void printbuf(const type *buf, unsigned n, const char *name = NULL) {
 
 	if (name) printf("%s = [ ", name);
 	else printf("[ ");
-	while (n--) std::cout << *(buf++) << " ";
+	while (n--) cout << *(buf++) << " ";
 	printf("]\n");
 }
 
