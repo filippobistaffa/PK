@@ -32,8 +32,6 @@ int main(int argc, char *argv[]) {
 	//	printf("%u\n", COALVALUE(csbuf + i * (K + 1), GET(dr, csbuf[i * (K + 1) + 1]), sp));
 	//}
 
-	coalrat(adj, dr, sp);
-
 	IloEnv env;
 	IloModel model(env);
 	IloFloatVarArray x(env, N);
@@ -44,6 +42,10 @@ int main(int argc, char *argv[]) {
 		x[i] = IloFloatVar(env, 0.0, FLT_MAX, ostr.str().c_str());
 		ostr.str("");
 	}
+
+	// Coalitional rationality constraints
+
+	coalrat(env, x, adj, dr, sp);
 
 	// Efficiency constraints
 

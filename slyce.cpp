@@ -189,7 +189,7 @@ void coalition(agent *c, agent d, const meter *sp) {
 
 }
 
-size_t slyce(agent *r, agent *f, agent m, const agent *adj, agent d, const chunk *dr, const meter *sp) {
+size_t slyce(IloEnv env, IloFloatVarArray x, agent *r, agent *f, agent m, const agent *adj, agent d, const chunk *dr, const meter *sp) {
 
 	size_t ret = 0;
 
@@ -214,7 +214,7 @@ size_t slyce(agent *r, agent *f, agent m, const agent *adj, agent d, const chunk
 				memcpy(nfs, fs, sizeof(agent) * k);
 				QSORT(agent, nr + 1, *nr, LTDR);
 				nbar(fs, k, r, nr, adj, nf, dr);
-				ret += slyce(nr, nf, m - k, adj, d + nd, dr, sp);
+				ret += slyce(env, x, nr, nf, m - k, adj, d + nd, dr, sp);
 			}
 			inittwiddle(k, *f, p);
 			while (!twiddle(&w, &y, &z, p)) {
@@ -225,7 +225,7 @@ size_t slyce(agent *r, agent *f, agent m, const agent *adj, agent d, const chunk
 					memcpy(nfs, fs, sizeof(agent) * k);
 					QSORT(agent, nr + 1, *nr, LTDR);
 					nbar(fs, k, r, nr, adj, nf, dr);
-					ret += slyce(nr, nf, m - k, adj, d + nd, dr, sp);
+					ret += slyce(env, x, nr, nf, m - k, adj, d + nd, dr, sp);
 				}
 			}
 		}
@@ -234,7 +234,7 @@ size_t slyce(agent *r, agent *f, agent m, const agent *adj, agent d, const chunk
 	return ret;
 }
 
-size_t coalrat(const agent *adj, const chunk *dr, const meter *sp) {
+size_t coalrat(IloEnv env, IloFloatVarArray x, const agent *adj, const chunk *dr, const meter *sp) {
 
 	agent *r = (agent *)malloc(sizeof(agent) * (K + 1) * N);
 	agent *f = (agent *)malloc(sizeof(agent) * (N + 1) * N);
@@ -242,7 +242,7 @@ size_t coalrat(const agent *adj, const chunk *dr, const meter *sp) {
 
 	for (agent i = 0; i < N; i++) {
 		r[0] = 0; f[0] = 1; f[1] = i;
-		ret += slyce(r, f, K, adj, 0, dr, sp);
+		ret += slyce(env, x, r, f, K, adj, 0, dr, sp);
 	}
 
 	free(f);
