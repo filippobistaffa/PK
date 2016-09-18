@@ -4,11 +4,11 @@ This branch contains the code to compute a core-stable allocation for Social Rid
 
 Requirements
 ----------
-PC requires `g++` to compile, and relies on [IBM CPLEX](https://www-01.ibm.com/software/commerce/optimization/cplex-optimizer) to compute a core-stable payment allocation. In order to compile againt CPLEX, `INC` and `LDIR` inside [`Makefile`](https://github.com/filippobistaffa/PC/blob/core/pc.sh)  must be set to point to the `include` and `lib` folders of CPLEX.
+PC requires `g++` to compile, and relies on [IBM CPLEX](https://www-01.ibm.com/software/commerce/optimization/cplex-optimizer) to compute a core-stable payment allocation. In order to compile againt CPLEX, `INC` and `LDIR` inside [`Makefile`](https://github.com/filippobistaffa/PK/blob/core/Makefile)  must be set to point to the `include` and `lib` folders of CPLEX.
 
 Execution
 ----------
-PC must be executed by means of the [`pc.sh`](https://github.com/filippobistaffa/PK/blob/master/pc.sh) script, i.e.,
+PC must be executed by means of the [`pc.sh`](https://github.com/filippobistaffa/PK/blob/core/pc.sh) script, i.e.,
 ```
 ./pc.sh INPUTFILE
 ```
