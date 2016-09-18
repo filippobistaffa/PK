@@ -20,7 +20,7 @@ DEPSUBDIR=dep
 ECHOCC=echo "[\033[01;33m CC \033[0m]"
 ECHOLD=echo "[\033[01;36m LD \033[0m]"
 
-OPT=${OPTIM} # Put desired optimisation level here
+OPT=${NOOPTIM} # Put desired optimisation level here
 
 define compilec
 ${ECHOCC} $(notdir $<) ;\
