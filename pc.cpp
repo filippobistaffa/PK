@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 	IloEnv env;
 	IloModel model(env);
 	IloFloatVarArray x(env, N);
-	std::ostringstream ostr;
+	ostringstream ostr;
 
 	for (agent i = 0; i < N; i++) {
 		ostr << "x[" << i << "]";
