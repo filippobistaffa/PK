@@ -1,5 +1,7 @@
 #include "pk.h"
 
+static char line[MAXLINE];
+
 // Minimum of an array using SSE
 
 __attribute__((always_inline)) inline
@@ -109,10 +111,26 @@ meter minpath(agent *c, agent n, agent dr, const meter *sp) {
 int main(int argc, char *argv[]) {
 
 	agent *csbuf = (agent *)malloc(sizeof(agent) * (K + 1) * N);
+	agent *adj = (agent *)malloc(sizeof(agent) * N * N);
 	chunk cars[C] = {0};
-	agent nc = readcs(csbuf, cars);
+
+	// Read input file
+
+	FILE *f = fopen(INPUTFILE, "rt");
+	// Skip first 3 lines (N, K, SEED)
+	fgets(line, MAXLINE, f);
+	fgets(line, MAXLINE, f);
+	fgets(line, MAXLINE, f);
+	edge ne = readadj(adj, f);
+	agent nc = readcs(csbuf, cars, f);
+	fclose(f);
+
+	printf("%u edges\n", ne);
+
+	for (agent i = 0; i < N; i++)
+		printbuf(adj + i * N + 1, adj[i * N]);
+
 	printf("%u coalitions\n", nc);
-	printf("%lu\n", *cars);
 	meter *sp = createsp();
 
 	for (agent i = 0; i < nc; i++) {
@@ -121,6 +139,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	free(csbuf);
+	free(adj);
 	free(sp);
 
 	return 0;
