@@ -141,6 +141,10 @@ int main(int argc, char *argv[]) {
 	IloEnv env;
 	IloModel model(env);
 	IloNumVarArray x(env);
+
+	for (agent i = 0; i < N; i++)
+		x.add(IloNumVar(env)); // Payments are positive, hence the default range [0, +∞)
+
 	env.end();
 
 	free(csbuf);
