@@ -45,9 +45,12 @@ all: pc
 
 -include ${DEPSUBDIR}/*.d
 
-pc: ${COBJSUBDIR}/pc.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o
+pc: ${COBJSUBDIR}/pc.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o ${COBJSUBDIR}/value.o
 	@${ECHOLD} pc
 	@${CMP} ${OPT} ${LDIR} $^ ${LINK} -o ${OUT}
+
+${COBJSUBDIR}/value.o: value.cpp
+	@$(compilec)
 
 ${COBJSUBDIR}/io.o: io.cpp
 	@$(compilec)
