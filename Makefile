@@ -1,14 +1,18 @@
 .PHONY:
 
 ifndef OUT
-OUT=./pk
+OUT=./pc
 endif
 
 CMP=g++
 WARN=-Wall -Wno-unused-result -Wno-deprecated-declarations -Wno-sign-compare -Wno-maybe-uninitialized
-OPTIM=-Ofast -march=native -funroll-loops -funsafe-loop-optimizations -falign-functions=16 -falign-loops=16
-NOOPTIM=-O0 -march=native
+OPTIM=-Ofast -march=native -funroll-loops -funsafe-loop-optimizations -falign-functions=16 -falign-loops=16 -fopenmp
+NOOPTIM=-O0 -march=native -fopenmp
 DBG=-g ${NOOPTIM}
+
+INC=-DIL_STD -I/media/filippo/ssd/cplex/cplex/include -I/media/filippo/ssd/cplex/concert/include
+LDIR=-L/media/filippo/ssd/cplex/concert/lib/x86-64_linux/static_pic -L/media/filippo/ssd/cplex/cplex/lib/x86-64_linux/static_pic
+LINK=-lconcert -lilocplex -lcplex
 
 COBJSUBDIR=cobj
 DEPSUBDIR=dep
@@ -37,13 +41,13 @@ exit $$ret ;\
 fi
 endef
 
-all: pk
+all: pc
 
 -include ${DEPSUBDIR}/*.d
 
-pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o
-	@${ECHOLD} pk
-	@${CMP} ${OPT} $^ ${LINK} -o ${OUT}
+pc: ${COBJSUBDIR}/pc.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o
+	@${ECHOLD} pc
+	@${CMP} ${OPT} ${LDIR} $^ ${LINK} -o ${OUT}
 
 ${COBJSUBDIR}/io.o: io.cpp
 	@$(compilec)
@@ -51,7 +55,7 @@ ${COBJSUBDIR}/io.o: io.cpp
 ${COBJSUBDIR}/sp.o: sp.cpp
 	@$(compilec)
 
-${COBJSUBDIR}/pk.o: pk.cpp
+${COBJSUBDIR}/pc.o: pc.cpp
 	@$(compilec)
 
 clean:
@@ -59,4 +63,4 @@ clean:
 	@rm -rf ${COBJSUBDIR} ${DEPSUBDIR}
 
 run:
-	./pk.sh test.sol
+	./pc.sh test.sol

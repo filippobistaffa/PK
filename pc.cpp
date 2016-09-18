@@ -1,4 +1,4 @@
-#include "pk.h"
+#include "pc.h"
 
 static char line[MAXLINE];
 
@@ -137,6 +137,8 @@ int main(int argc, char *argv[]) {
 		printbuf(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)]);
 		printf("%u\n", COALVALUE(csbuf + i * (K + 1), GET(cars, i), sp));
 	}
+
+	IloEnv env;
 
 	free(csbuf);
 	free(adj);

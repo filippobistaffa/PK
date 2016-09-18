@@ -9,6 +9,9 @@
 #include <sys/time.h>
 #include <immintrin.h>
 
+// Cplex headers
+#include <ilcplex/ilocplex.h>
+
 #include "instance.h"
 #include "params.h"
 #include "macros.h"
