@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 	timer.start();
 
 	if (!cplex.solve()) {
-		env.error() << "Failed to optimize model." << endl;
+		env.out() << "Core is empty" << endl;
 		exit(1);
 	}
 
