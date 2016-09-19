@@ -134,7 +134,7 @@ meter astar(place start, place dest, place nodes, const id *idx, const place *ad
 	return 0;
 }
 
-meter *createsp() {
+meter *createsp(unsigned seed) {
 
 	FILE *f;
 	place nodes, edges;
@@ -174,7 +174,7 @@ meter *createsp() {
 	fread(stops, sizeof(place), 2 * pool, f);
 	fclose(f);
 
-	srand(SEED);
+	srand(seed);
 	shuffle(stops, pool, sizeof(place) * 2);
 	stops = (place *)realloc(stops, sizeof(place) * 2 * N);
 	dist *ds = (dist *)calloc(nodes * nodes, sizeof(dist));

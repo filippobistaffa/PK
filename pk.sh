@@ -14,12 +14,10 @@ fi
 
 N=`sed '1q;d' $1`	# Number of agents
 K=`sed '2q;d' $1`	# Maximum cardinality
-SEED=`sed '3q;d' $1`	# Seed
 
 tmp=`mktemp`
 echo "#define N $N" > $tmp
 echo "#define K $K" >> $tmp
-echo "#define SEED $SEED" >> $tmp
 echo "#define INPUTFILE \"$1\"" >> $tmp
 
 if [ ! -f instance.h ]

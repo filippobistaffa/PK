@@ -10,6 +10,6 @@
 
 typedef struct { place p; dist f; } item;
 
-meter *createsp();
+meter *createsp(unsigned seed);
 
 #endif /* SP_H_ */
