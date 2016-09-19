@@ -2,6 +2,7 @@ instance.h
 cobj
 dep
 pk
+pc
 
 *sol
 *log
