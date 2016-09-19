@@ -11,10 +11,12 @@ int main(int argc, char *argv[]) {
 	// Read input file
 
 	FILE *f = fopen(INPUTFILE, "rt");
-	// Skip first 3 lines (N, K, SEED)
+	// Skip first 2 lines (N, K)
 	fgets(line, MAXLINE, f);
 	fgets(line, MAXLINE, f);
+	// Read seed
 	fgets(line, MAXLINE, f);
+	unsigned seed = atoi(line);
 	edge ne = readadj(adj, f);
 	agent nc = readcs(csbuf, dr, f);
 	fclose(f);
@@ -25,7 +27,7 @@ int main(int argc, char *argv[]) {
 		printbuf(adj + i * N + 1, adj[i * N]);
 
 	printf("%u coalitions\n", nc);
-	meter *sp = createsp();
+	meter *sp = createsp(seed);
 
 	for (agent i = 0; i < nc; i++)
 		printc(csbuf + i * (K + 1), COALVALUE(csbuf + i * (K + 1), GET(dr, csbuf[i * (K + 1) + 1]), sp));
