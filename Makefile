@@ -1,4 +1,4 @@
-.PHONY:
+.PHONY: all
 
 ifndef OUT
 OUT=./pk
@@ -38,6 +38,7 @@ fi
 endef
 
 all: pk
+	@true
 
 -include ${DEPSUBDIR}/*.d
 
