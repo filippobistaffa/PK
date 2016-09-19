@@ -10,8 +10,8 @@ OPTIM=-Ofast -march=native -funroll-loops -funsafe-loop-optimizations -falign-fu
 NOOPTIM=-O0 -march=native -fopenmp
 DBG=-g ${NOOPTIM}
 
-INC=-DIL_STD -I/media/filippo/ssd/cplex/cplex/include -I/media/filippo/ssd/cplex/concert/include
-LDIR=-L/media/filippo/ssd/cplex/concert/lib/x86-64_linux/static_pic -L/media/filippo/ssd/cplex/cplex/lib/x86-64_linux/static_pic
+INC=-DIL_STD -I/opt/ibm/ILOG/CPLEX_Studio1263/cplex/include -I/opt/ibm/ILOG/CPLEX_Studio1263/concert/include
+LDIR=-L/opt/ibm/ILOG/CPLEX_Studio1263/concert/lib/x86-64_linux/static_pic -L/opt/ibm/ILOG/CPLEX_Studio1263/cplex/lib/x86-64_linux/static_pic
 LINK=-lconcert -lilocplex -lcplex
 
 COBJSUBDIR=cobj
