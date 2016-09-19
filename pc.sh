@@ -36,4 +36,4 @@ else
 fi
 
 make -j
-time -p ./pc
+./pc
