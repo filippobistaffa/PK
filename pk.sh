@@ -36,4 +36,7 @@ else
 fi
 
 make -j
-time -p ./pk
+if [[ $? == 0 ]]
+then
+	time -p ./pk
+fi
