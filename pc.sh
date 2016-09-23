@@ -36,4 +36,7 @@ else
 fi
 
 make -j
-./pc
+if [[ $? == 0 ]]
+then
+	./pc
+fi
