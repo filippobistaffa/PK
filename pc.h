@@ -1,5 +1,5 @@
-#ifndef PK_H_
-#define PK_H_
+#ifndef PC_H_
+#define PC_H_
 
 #include <omp.h>
 #include <stdio.h>
@@ -28,4 +28,4 @@ using namespace std;
 #include "io.h"
 #include "sp.h"
 
-#endif /* PK_H_ */
+#endif /* PC_H_ */
