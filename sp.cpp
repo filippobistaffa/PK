@@ -196,7 +196,11 @@ meter *createsp(unsigned seed) {
 			sp[i * 2 * N + j] = sp[j * 2 * N + i] = astar(stops[i], stops[j], nodes, idx, adj, ds);
 	}
 
-	free(ds);
+	free(stops);
 	free(adj);
+	free(idx);
+	free(xy);
+	free(ds);
+
 	return sp;
 }
