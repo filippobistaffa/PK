@@ -22,7 +22,7 @@ type vectorsum(const agent *r, agent n, const type *x) {
 }
 
 template <typename type>
-void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *dr, type *data) {
+void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *l, type *data) {
 
 	pkdata *pkd = (pkdata *)data;
 	register agent i, j, *t, *oc = c;
@@ -39,7 +39,7 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 		// dc = C' - C
 		agent dc[N];
 		differencesorted(pkd->csbuf + pkd->rev[*c] * (K + 1) + 1, pkd->csbuf[pkd->rev[*c] * (K + 1)],
-				 oc + 1, *oc, dc + 1, dc, dr);
+				 oc + 1, *oc, dc + 1, dc, l);
 		j = *dc;
 		t = dc + 1;
 
@@ -54,7 +54,7 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 }
 
 __attribute__((always_inline)) inline
-void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *dr,
+void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *l,
 		  const meter *sp) {
 
 	memset(nc, 0, sizeof(size_t) * N);
@@ -64,10 +64,10 @@ void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const ag
 			sm[i * N + j] = sm[j * N + i] = -INFINITY;
 
 	pkdata pkd = { .sm = sm, .x = x, .csbuf = csbuf, .rev = rev, .nc = nc, .sp = sp };
-	coalitions(g, updatesm, &pkd, K, dr, 1);
+	coalitions(g, updatesm, &pkd, K, l, 1);
 }
 
-agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const chunk *dr, const agent *deg, const meter *sp) {
+agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const chunk *l, const agent *deg, const meter *sp) {
 
 	agent *rev = (agent *)malloc(sizeof(agent) * N);
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 
 	agent *csbuf = (agent *)malloc(sizeof(agent) * (K + 1) * N);
 	agent *adj = (agent *)malloc(sizeof(agent) * N * N);
-	chunk dr[C] = {0};
+	chunk l[C] = {0};
 
 	// Read input file
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 	fgets(line, MAXLINE, f);
 	unsigned seed = atoi(line);
 	edge ne = readadj(adj, f);
-	agent nc = readcs(f, csbuf, dr);
+	agent nc = readcs(f, csbuf, l);
 	fclose(f);
 
 	printf("%u edges\n", ne);
@@ -116,7 +116,8 @@ int main(int argc, char *argv[]) {
 	value *x = (value *)malloc(sizeof(value) * N);
 
 	for (agent i = 0; i < nc; i++) {
-		const value val = srvalue(csbuf + i * (K + 1), maskcount(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], dr), sp);
+		QSORT(agent, csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], LTL);
+		const value val = srvalue(csbuf + i * (K + 1), maskcount(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], l), sp);
 		for (agent j = 0; j < csbuf[i * (K + 1)]; ++j)
                         x[csbuf[i * (K + 1) + j + 1]] = -val / csbuf[i * (K + 1)];
 		#ifndef CSV
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
 		#endif
 	}
 
-	computekernel(x, 0, csbuf, nc, dr, NULL, sp);
+	computekernel(x, 0, csbuf, nc, l, NULL, sp);
 	printbuf(x, N, "x");
 
 	free(csbuf);
