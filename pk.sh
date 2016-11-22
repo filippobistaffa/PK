@@ -1,24 +1,45 @@
 #!/usr/bin/env bash
 
-if [ "$#" -eq 0 ]
+red='\033[0;31m'			# Red
+nc='\033[0m'				# No color
+re='^[0-9]+$'				# Regular expression to detect natural numbers
+
+usage() { echo -e "Usage: $0 -i <filename> [-c]\n-i\tInput filename\n-c\tEnable CSV output" 1>&2; exit 1; }
+
+while getopts ":i:c" o; do
+	case "${o}" in
+	i)
+		i=${OPTARG}
+		if [ ! -f "$i" ]
+		then
+			echo -e "${red}Input file \"$i\" not found!${nc}\n" 1>&2
+			usage
+		fi
+		;;
+	c)
+		c=1
+		;;
+	\?)
+		echo -e "${red}-$OPTARG is not a valid option!${nc}\n" 1>&2
+		usage
+		;;
+	esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${i}" ]
 then
-	echo "Usage: $0 INPUTFILE"
-	exit
+	echo -e "${red}Missing one or more required options!${nc}\n" 1>&2
+	usage
 fi
 
-if [ ! -f "$1" ]
-then
-	echo "$1 not found"
-	exit
-fi
-
-N=`sed '1q;d' $1`	# Number of agents
-K=`sed '2q;d' $1`	# Maximum cardinality
+N=`sed '1q;d' $i`	# Number of agents
+K=`sed '2q;d' $i`	# Maximum cardinality
 
 tmp=`mktemp`
 echo "#define N $N" > $tmp
 echo "#define K $K" >> $tmp
-echo "#define INPUTFILE \"$1\"" >> $tmp
+echo "#define INPUTFILE \"$i\"" >> $tmp
 
 if [ ! -f instance.h ]
 then
@@ -38,5 +59,7 @@ fi
 make -j
 if [[ $? == 0 ]]
 then
-	time -p ./pk
+	bin=$0
+	bin=${bin%???}
+	$bin
 fi
