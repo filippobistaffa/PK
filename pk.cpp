@@ -67,15 +67,29 @@ void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const ag
 	coalitions(g, updatesm, &pkd, K, dr, 1);
 }
 
+agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const chunk *dr, const agent *deg, const meter *sp) {
 
-//agent computekernel(payoff *x, payoff epsilon, const agent *a, const agent *dr, const meter *sp, const agent *deg) {
+	agent *rev = (agent *)malloc(sizeof(agent) * N);
 
+	for (agent i = 0; i < nc; ++i)
+		for (agent j = 0; j < csbuf[i * (K + 1)]; ++j)
+			rev[csbuf[i * (K + 1) + j + 1]] = i;
+
+	printbuf(rev, N, "rev");
+
+	value *sm = (value *)malloc(sizeof(value) * N * N);
+
+	free(rev);
+	free(sm);
+
+	return 0;
+}
 
 int main(int argc, char *argv[]) {
 
 	agent *csbuf = (agent *)malloc(sizeof(agent) * (K + 1) * N);
 	agent *adj = (agent *)malloc(sizeof(agent) * N * N);
-	chunk l[C] = {0};
+	chunk dr[C] = {0};
 
 	// Read input file
 
@@ -87,7 +101,7 @@ int main(int argc, char *argv[]) {
 	fgets(line, MAXLINE, f);
 	unsigned seed = atoi(line);
 	edge ne = readadj(adj, f);
-	agent nc = readcs(f, csbuf, l);
+	agent nc = readcs(f, csbuf, dr);
 	fclose(f);
 
 	printf("%u edges\n", ne);
@@ -99,12 +113,14 @@ int main(int argc, char *argv[]) {
 	meter *sp = createsp(seed);
 
 	for (agent i = 0; i < nc; i++) {
-		const value val = srvalue(csbuf + i * (K + 1), maskcount(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], l), sp);
+		const value val = srvalue(csbuf + i * (K + 1), maskcount(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], dr), sp);
 		#ifndef CSV
 		printbuf(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], NULL, NULL, " = ");
 		printf("%.2f\n", val);
 		#endif
 	}
+
+	computekernel(NULL, 0, csbuf, nc, dr, NULL, sp);
 
 	free(csbuf);
 	free(adj);
