@@ -5,15 +5,19 @@
 
 // Prints the content given buffer
 
+#include <stdio.h>
 #include <iostream>
 template <typename type>
 __attribute__((always_inline)) inline
-void printbuf(const type *buf, unsigned n, const char *name = NULL) {
+void printbuf(const type *buf, unsigned n, const char *name = NULL, const char *format = NULL, const char *after = NULL) {
 
 	if (name) printf("%s = [ ", name);
 	else printf("[ ");
-	while (n--) std::cout << *(buf++) << " ";
-	printf("]\n");
+	while (n--) {
+		if (format) { printf(format, *(buf++)); printf(" "); }
+		else std::cout << *(buf++) << " ";
+	}
+	printf("]%s", (after) ? after : "\n");
 }
 
 // Reads the graph's adjacency lists
@@ -22,6 +26,6 @@ edge readadj(agent *adj, FILE *f);
 
 // Reads the solution coalition structure
 
-agent readcs(agent *csbuf, chunk *cars, FILE *f);
+agent readcs(FILE *f, agent *csbuf, chunk *cars);
 
 #endif /* IO_H_ */

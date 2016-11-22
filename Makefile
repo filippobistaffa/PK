@@ -6,9 +6,13 @@ endif
 
 CMP=g++
 WARN=-Wall -Wno-unused-result -Wno-deprecated-declarations -Wno-sign-compare -Wno-maybe-uninitialized
-OPTIM=-Ofast -march=native -funroll-loops -funsafe-loop-optimizations -falign-functions=16 -falign-loops=16
-NOOPTIM=-O0 -march=native
+OPTIM=-Ofast -march=native -funroll-loops -funsafe-loop-optimizations -falign-functions=16 -falign-loops=16 -fopenmp
+NOOPTIM=-O0 -march=native -fopenmp
 DBG=-g ${NOOPTIM}
+
+INC=
+LDIR=
+LINK=-lgomp
 
 COBJSUBDIR=cobj
 DEPSUBDIR=dep
@@ -42,7 +46,7 @@ all: pk
 
 -include ${DEPSUBDIR}/*.d
 
-pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o
+pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o ${COBJSUBDIR}/value.o
 	@${ECHOLD} pk
 	@${CMP} ${OPT} $^ ${LINK} -o ${OUT}
 
@@ -50,6 +54,9 @@ ${COBJSUBDIR}/io.o: io.cpp
 	@$(compilec)
 
 ${COBJSUBDIR}/sp.o: sp.cpp
+	@$(compilec)
+
+${COBJSUBDIR}/value.o: value.cpp
 	@$(compilec)
 
 ${COBJSUBDIR}/pk.o: pk.cpp

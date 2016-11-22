@@ -12,12 +12,12 @@
 #include "iqsort.h"
 #include "sorted.h"
 
-#define _C CEILBPC(_N)
-#define P(_s, _i) (pm[(_s) * _N + (_i)])
-#define BC(_n, _m) (bcm[(_n) * (_N + 1) + (_m)])
+#define C CEILBPC(N)
+#define P(_s, _i) (pm[(_s) * N + (_i)])
+#define BC(N, _m) (bcm[(N) * (N + 1) + (_m)])
 
 typedef int16_t sign;
-static size_t bcm[(_N + 1) * (_N + 1)], pm[_N * _N];
+static size_t bcm[(N + 1) * (N + 1)], pm[N * N];
 
 template <agent n>
 __attribute__((always_inline)) inline
@@ -136,12 +136,12 @@ __attribute__((always_inline)) inline
 void neighbours(const agent *f, agent m, const agent *adj, agent *n, const chunk *l) {
 
 	if (m) {
-		agent t[_N + 1];
-		memcpy(n, adj + *f * _N, sizeof(agent) * (adj[*f * _N] + 1));
+		agent t[N + 1];
+		memcpy(n, adj + *f * N, sizeof(agent) * (adj[*f * N] + 1));
 		f++;
 
 		while (--m) {
-			unionsorted(n + 1, *n, adj + *f * _N + 1, adj[*f * _N], t + 1, t, l);
+			unionsorted(n + 1, *n, adj + *f * N + 1, adj[*f * N], t + 1, t, l);
 			memcpy(n, t, sizeof(agent) * (*t + 1));
 			f++;
 		}
@@ -152,7 +152,7 @@ void neighbours(const agent *f, agent m, const agent *adj, agent *n, const chunk
 __attribute__((always_inline)) inline
 void nbar(const agent *f, agent n, const agent *r, const agent *ruf, const agent *adj, agent *nb, const chunk *l) {
 
-	agent a[_N + 1], b[_N + 1];
+	agent a[N + 1], b[N + 1];
 	neighbours(f, n, adj, a, l);
 	agent i = 0;
 	while (i < *a && LEL(a + i + 1, ruf + 1)) i++;
@@ -200,9 +200,9 @@ void recursive(agent *r, agent *f, agent m, agent maxc, const edge *g, const age
 
 	if (*f && m) {
 
-		agent k, *nr = r + maxc + 1, *nf = f + _N + 1, *nfs = nr + *r + 1, fs[_N], rt[_N];
+		agent k, *nr = r + maxc + 1, *nf = f + N + 1, *nfs = nr + *r + 1, fs[N], rt[N];
 		memcpy(rt, r + 1, sizeof(agent) * *r);
-		sign w, y, z, p[_N + 2];
+		sign w, y, z, p[N + 2];
 
 		for (k = 1; k <= MIN(*f, m); k++) {
 			*nr = *r + k;
@@ -235,31 +235,31 @@ template <typename type>
 void recursivepar(agent id, agent m, agent maxc, const edge *g, const agent *adj, agent d, const chunk *l, agent maxl,
 		  void (*cf)(agent *, agent, const edge *, const agent *, const chunk *, type *), type *data) {
 
-	agent *r = (agent *)malloc(sizeof(agent) * (maxc + 1) * _N);
-	agent *f = (agent *)malloc(sizeof(agent) * (_N + 1) * _N);
-	agent *ft = (agent *)malloc(sizeof(agent) * _N);
+	agent *r = (agent *)malloc(sizeof(agent) * (maxc + 1) * N);
+	agent *f = (agent *)malloc(sizeof(agent) * (N + 1) * N);
+	agent *ft = (agent *)malloc(sizeof(agent) * N);
 
 	agent a[3] = {1, id, 0};
 	cf(a, GET(l, id), g, adj, l, data);
 
-        for (agent i = 0; i < _N; i++) {
+        for (agent i = 0; i < N; i++) {
 
                 a[1] = i;
                 nbar(a + 1, 1, a + 2, a, adj, f, l);
 
                 for (agent k = 1; k <= MIN(*f, m - 1); k++) {
 			size_t bc = BC(*f, k);
-			agent j = bc * id / _N;
-                        while (j < bc * (id + 1) / _N) {
+			agent j = bc * id / N;
+                        while (j < bc * (id + 1) / N) {
 				li(f, j + 1, k, ft, l);
 				j++;
 				unionsorted(a + 1, 1, ft + 1, *ft, r + 1, r, l);
-				nbar(ft + 1, k, a, r, adj, f + _N + 1, l);
+				nbar(ft + 1, k, a, r, adj, f + N + 1, l);
 				const agent nl = maskcount(r + 1, *r, l);
-				if (nl <= maxl) recursive(r, f + _N + 1, m - (k + 1), maxc, g, adj, nl, l, maxl, cf, data);
+				if (nl <= maxl) recursive(r, f + N + 1, m - (k + 1), maxc, g, adj, nl, l, maxl, cf, data);
                         }
 
-                        id = (id + 1) % _N;
+                        id = (id + 1) % N;
                 }
         }
 
@@ -271,11 +271,11 @@ void recursivepar(agent id, agent m, agent maxc, const edge *g, const agent *adj
 __attribute__((always_inline)) inline
 void initpar() {
 
-	for (agent i = 0; i <= _N; i++) BC(i, 0) = BC(i, i) = ONE;
-	for (agent i = 1; i <= _N; i++) for (agent j = 1; j < i; j++) BC(i, j) = BC(i - 1, j - 1) + BC(i - 1, j);
-	for (agent i = 1; i < _N; i++) P(i, 1) = ONE;
-	for (agent i = 2; i < _N; i++) P(1, i) = i;
-	for (agent i = 2; i < _N; i++) for (agent j = 2; j < _N; j++) P(i, j) = P(i - 1, j) + P(i, j - 1);
+	for (agent i = 0; i <= N; i++) BC(i, 0) = BC(i, i) = ONE;
+	for (agent i = 1; i <= N; i++) for (agent j = 1; j < i; j++) BC(i, j) = BC(i - 1, j - 1) + BC(i - 1, j);
+	for (agent i = 1; i < N; i++) P(i, 1) = ONE;
+	for (agent i = 2; i < N; i++) P(1, i) = i;
+	for (agent i = 2; i < N; i++) for (agent j = 2; j < N; j++) P(i, j) = P(i - 1, j) + P(i, j - 1);
 }
 
 template <typename type>
@@ -285,23 +285,23 @@ void coalitions(const edge *g, void (*cf)(agent *, agent, const edge *, const ag
 	chunk *tl;
 
 	if (!l) {
-		tl = (chunk *)malloc(sizeof(chunk) * _C);
-		ONES(tl, _N, _C);
+		tl = (chunk *)malloc(sizeof(chunk) * C);
+		ONES(tl, N, C);
 	}
 
-	agent *r = (agent *)malloc(sizeof(agent) * (maxc + 1) * _N);
-	agent *f = (agent *)malloc(sizeof(agent) * (_N + 1) * _N);
+	agent *r = (agent *)malloc(sizeof(agent) * (maxc + 1) * N);
+	agent *f = (agent *)malloc(sizeof(agent) * (N + 1) * N);
 	edge ne = 0;
 
-	for (agent i = 0; i < _N; i++)
-		for (agent j = i + 1; j < _N; j++)
-			if (g[i * _N + j]) ne++;
+	for (agent i = 0; i < N; i++)
+		for (agent j = i + 1; j < N; j++)
+			if (g[i * N + j]) ne++;
 
-	agent *adj = createadj<_N>(g, ne, l ? l : tl);
-	edge zero[_N] = {0};
+	agent *adj = createadj<N>(g, ne, l ? l : tl);
+	edge zero[N] = {0};
 
-	for (agent i = 0; i < _N; i++)
-		if (memcmp(g + i * _N, zero, sizeof(agent) * _N)) {
+	for (agent i = 0; i < N; i++)
+		if (memcmp(g + i * N, zero, sizeof(agent) * N)) {
 			r[0] = 0; f[0] = 1; f[1] = i;
 			recursive(r, f, maxc, maxc, g, adj, 0, l ? l : tl, maxl, cf, data);
 		}
@@ -320,22 +320,22 @@ void parcoalitions(const edge *g, void (*cf)(agent *, agent, const edge *, const
 	chunk *tl;
 
 	if (!l) {
-		tl = (chunk *)malloc(sizeof(chunk) * _C);
-		ONES(tl, _N, _C);
+		tl = (chunk *)malloc(sizeof(chunk) * C);
+		ONES(tl, N, C);
 	}
 
 	edge ne = 0;
 
-	for (agent i = 0; i < _N; i++)
-		for (agent j = i + 1; j < _N; j++)
-			if (g[i * _N + j]) ne++;
+	for (agent i = 0; i < N; i++)
+		for (agent j = i + 1; j < N; j++)
+			if (g[i * N + j]) ne++;
 
-	agent *adj = createadj<_N>(g, ne, l ? l : tl);
-	edge zero[_N] = {0};
+	agent *adj = createadj<N>(g, ne, l ? l : tl);
+	edge zero[N] = {0};
 
 	#pragma omp parallel for
-	for (agent i = 0; i < _N; i++)
-		if (memcmp(g + i * _N, zero, sizeof(agent) * _N))
+	for (agent i = 0; i < N; i++)
+		if (memcmp(g + i * N, zero, sizeof(agent) * N))
 			recursivepar(i, maxc, maxc, g, adj, 0, l ? l : tl, maxl, cf, data[omp_get_thread_num()]);
 
 	if (!l) free(tl);

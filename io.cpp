@@ -20,7 +20,7 @@ edge readadj(agent *adj, FILE *f) {
 
 // Reads the solution coalition structure
 
-agent readcs(agent *csbuf, chunk *cars, FILE *f) {
+agent readcs(FILE *f, agent *csbuf, chunk *cars) {
 
 	agent ret = 0;
 

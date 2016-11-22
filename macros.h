@@ -1,16 +1,23 @@
 #ifndef MACROS_H_
 #define MACROS_H_
 
+#define EPSILON 0.1
+
 #define MAX(X, Y) ((X) > (Y) ? (X) : (Y))
 #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
 
 #define LT(X, Y) (*(X) < *(Y))
 #define LE(X, Y) (*(X) <= *(Y))
+#define LTL(X, Y) (GET(l, *(X)) == GET(l, *(Y)) ? (*(X)) < (*(Y)) : GET(l, *(X)) > GET(l, *(Y)))
+#define LEL(X, Y) (GET(l, *(X)) == GET(l, *(Y)) ? (*(X)) <= (*(Y)) : GET(l, *(X)) > GET(l, *(Y)))
 #define GT(X, Y) (*(X) > *(Y))
 #define GE(X, Y) (*(X) >= *(Y))
 
 #define X(V, I) ((V)[2 * (I)])
 #define Y(V, I) ((V)[2 * (I) + 1])
+
+#define ROUND(TYPE, I) ((TYPE)(I))
+#define DIST(DX, DY) (sqrt((DX) * (DX) + (DY) * (DY)))
 
 #define DIVBPC(X) ((X) / BITSPERCHUNK)
 #define MODBPC(X) ((X) % BITSPERCHUNK)

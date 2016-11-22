@@ -1,7 +1,18 @@
 #ifndef SP_H_
 #define SP_H_
 
+// Headers
+
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "instance.h"
+#include "random.h"
+#include "macros.h"
+#include "types.h"
+
+// GeoLife dataset
 
 #define IDX "dat/idx.dat"
 #define ADJ "dat/adj.dat"
