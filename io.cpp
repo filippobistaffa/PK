@@ -2,6 +2,18 @@
 
 static char line[MAXLINE];
 
+// Reads the graph's adjacency matrix
+
+void readg(edge *g, FILE *f) {
+
+	for (agent i = 0; i < N; i++) {
+		fgets(line, MAXLINE, f);
+		g[i * N] = atoi(strtok(line, " "));
+		for (agent j = 1; j < N; j++)
+			g[i * N + j] = atoi(strtok(NULL, " "));
+	}
+}
+
 // Reads the graph's adjacency lists
 
 edge readadj(agent *adj, FILE *f) {
@@ -20,7 +32,7 @@ edge readadj(agent *adj, FILE *f) {
 
 // Reads the solution coalition structure
 
-agent readcs(FILE *f, agent *csbuf, chunk *cars) {
+agent readcs(agent *csbuf, chunk *cars, FILE *f) {
 
 	agent ret = 0;
 

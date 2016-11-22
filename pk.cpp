@@ -7,7 +7,7 @@ typedef struct {
 	const value *x; 	// payoff vector
 	const agent *csbuf;	// solution coalition structure
 	const agent *rev;	// rev[i] = j => i is in the j-th coalition in csbuf
-	size_t *nc;		// nc[i] = number of coalitions containing i
+	size_t *cc;		// cc[i] = number of coalitions containing i
 	const meter *sp;	// shortest paths matrix
 } pkdata;
 
@@ -35,7 +35,7 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 
 	if ((i = *(c++))) do {
 
-		pkd->nc[*c]++;
+		pkd->cc[*c]++;
 		// dc = C' - C
 		agent dc[N];
 		differencesorted(pkd->csbuf + pkd->rev[*c] * (K + 1) + 1, pkd->csbuf[pkd->rev[*c] * (K + 1)],
@@ -54,20 +54,21 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 }
 
 __attribute__((always_inline)) inline
-void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *l,
+void creatematrix(value *sm, size_t *cc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *l,
 		  const meter *sp) {
 
-	memset(nc, 0, sizeof(size_t) * N);
+	memset(cc, 0, sizeof(size_t) * N);
 
 	for (agent i = 0; i < N; i++)
 		for (agent j = i; j < N; j++)
 			sm[i * N + j] = sm[j * N + i] = -INFINITY;
 
-	pkdata pkd = { .sm = sm, .x = x, .csbuf = csbuf, .rev = rev, .nc = nc, .sp = sp };
+	pkdata pkd = { .sm = sm, .x = x, .csbuf = csbuf, .rev = rev, .cc = cc, .sp = sp };
 	coalitions(g, updatesm, &pkd, K, l, 1);
 }
 
-agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const chunk *l, const agent *deg, const meter *sp) {
+agent computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, agent nc, value val, const chunk *l,
+		    const agent *deg, const meter *sp) {
 
 	agent *rev = (agent *)malloc(sizeof(agent) * N);
 
@@ -75,8 +76,7 @@ agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const
 		for (agent j = 0; j < csbuf[i * (K + 1)]; ++j)
 			rev[csbuf[i * (K + 1) + j + 1]] = i;
 
-	printbuf(rev, N, "rev");
-
+	//printbuf(rev, N, "rev");
 	value *sing = (value *)malloc(sizeof(value) * N);
 
 	for (agent i = 0; i < N; ++i) {
@@ -84,9 +84,32 @@ agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const
 		sing [i] = srvalue(csing, GET(l, i), sp);
 	}
 
-	printbuf(sing, N, "sing");
-
+	//printbuf(sing, N, "sing");
 	value *sm = (value *)malloc(sizeof(value) * N * N);
+	size_t *cc = (size_t *)malloc(sizeof(size_t) * N);
+	value d, t;
+
+	/*do {
+		it++;
+		//printf("%zu coalitions\n", CREATEMATRIX(sm, x, l, ai, sp));
+		count = creatematrix(sm, cc, x, g, csbuf, rev, l, sp);
+		//printf("CRC32 = %u\n", crc32(sm, sizeof(payoff) * N * N));
+		d = -INFINITY;
+		agent mi, mj;
+		value e;
+
+		for (agent i = 0; i < N; i++)
+			for (agent j = i + 1; j < N; j++) {
+				if (sm[i * N + j] == -INFINITY && sm[j * N + i] == -INFINITY) t = -INFINITY;
+				else t = sm[i * N + j] - sm[j * N + i];
+				if (t > d) { d = t; mi = i; mj = j; }
+			}
+
+		if ((e = x[mj] + sing[mj]) >= d / 2) e = d / 2;
+		x[mi] += e;
+		x[mj] -= e;
+
+	} while (d / val > epsilon);*/
 
 	free(sing);
 	free(rev);
@@ -97,10 +120,6 @@ agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const
 
 int main(int argc, char *argv[]) {
 
-	agent *csbuf = (agent *)malloc(sizeof(agent) * (K + 1) * N);
-	agent *adj = (agent *)malloc(sizeof(agent) * N * N);
-	chunk l[C] = {0};
-
 	// Read input file
 
 	FILE *f = fopen(argv[1], "rt");
@@ -110,14 +129,20 @@ int main(int argc, char *argv[]) {
 	// Read seed
 	fgets(line, MAXLINE, f);
 	unsigned seed = atoi(line);
-	edge ne = readadj(adj, f);
-	agent nc = readcs(f, csbuf, l);
+
+	edge *g = (edge *)malloc(sizeof(edge) * N * N);
+	readg(g, f);
+
+	agent *csbuf = (agent *)malloc(sizeof(agent) * (K + 1) * N);
+	chunk l[C] = {0};
+	agent nc = readcs(csbuf, l, f);
+
 	fclose(f);
 
-	printf("%u edges\n", ne);
-
+	puts("Adjacency matrix");
 	for (agent i = 0; i < N; i++)
-		printbuf(adj + i * N + 1, adj[i * N]);
+		printbuf(g + i * N, N, NULL, "% 3u");
+	puts("");
 
 	printf("%u coalitions\n", nc);
 	meter *sp = createsp(seed);
@@ -125,9 +150,13 @@ int main(int argc, char *argv[]) {
 	// payoff vector
 	value *x = (value *)malloc(sizeof(value) * N);
 
+	// solution value
+	value totval = 0;
+
 	for (agent i = 0; i < nc; i++) {
 		QSORT(agent, csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], LTL);
 		const value val = srvalue(csbuf + i * (K + 1), maskcount(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], l), sp);
+		totval += val;
 		for (agent j = 0; j < csbuf[i * (K + 1)]; ++j)
                         x[csbuf[i * (K + 1) + j + 1]] = -val / csbuf[i * (K + 1)];
 		#ifndef CSV
@@ -136,13 +165,14 @@ int main(int argc, char *argv[]) {
 		#endif
 	}
 
-	computekernel(x, EPSILON, csbuf, nc, l, NULL, sp);
+	puts("");
+	computekernel(x, EPSILON, g, csbuf, nc, totval, l, NULL, sp);
 	printbuf(x, N, "x");
 
 	free(csbuf);
-	free(adj);
 	free(sp);
 	free(x);
+	free(g);
 
 	return 0;
 }

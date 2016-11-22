@@ -20,12 +20,16 @@ void printbuf(const type *buf, unsigned n, const char *name = NULL, const char *
 	printf("]%s", (after) ? after : "\n");
 }
 
+// Reads the graph's adjacency matrix
+
+void readg(edge *g, FILE *f);
+
 // Reads the graph's adjacency lists
 
 edge readadj(agent *adj, FILE *f);
 
 // Reads the solution coalition structure
 
-agent readcs(FILE *f, agent *csbuf, chunk *cars);
+agent readcs(agent *csbuf, chunk *cars, FILE *f);
 
 #endif /* IO_H_ */
