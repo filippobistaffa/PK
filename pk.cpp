@@ -77,8 +77,18 @@ agent computekernel(value *x, value epsilon, const agent *csbuf, agent nc, const
 
 	printbuf(rev, N, "rev");
 
+	value *sing = (value *)malloc(sizeof(value) * N);
+
+	for (agent i = 0; i < N; ++i) {
+		agent csing[] = { 1, i };
+		sing [i] = srvalue(csing, GET(l, i), sp);
+	}
+
+	printbuf(sing, N, "sing");
+
 	value *sm = (value *)malloc(sizeof(value) * N * N);
 
+	free(sing);
 	free(rev);
 	free(sm);
 
