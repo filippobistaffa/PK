@@ -33,8 +33,8 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 	register value vmx = vc + vectorsum(c + 1, *c, pkd->x);
 
 	if ((i = *(c++))) do {
-		pkd->ccount[*c]++;
 
+		pkd->ccount[*c]++;
 		// nc = C' - C
 		agent nc[N];
 		differencesorted(pkd->csbuf + pkd->rev[*c] * (K + 1) + 1, pkd->csbuf[pkd->rev[*c] * (K + 1)],
