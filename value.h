@@ -23,6 +23,6 @@
 
 // Computes the value of a coalition C (assumes only one driver per coalition)
 
-value srvalue(agent *c, agent nl, void *sp);
+value srvalue(agent *c, agent nl, const void *sp);
 
 #endif /* VALUE_H_ */
