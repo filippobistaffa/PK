@@ -1,18 +1,27 @@
 #!/usr/bin/env bash
 
+e=0.05					# Default epsilon = 0.05
 red='\033[0;31m'			# Red
 nc='\033[0m'				# No color
 re='^[0-9]+$'				# Regular expression to detect natural numbers
+rd='^[0-9]+\.?[0-9]*$'			# Regular expression to detect real numbers
 
-usage() { echo -e "Usage: $0 -i <filename> [-c]\n-i\tInput filename\n-c\tEnable CSV output" 1>&2; exit 1; }
+usage() { echo -e "Usage: $0 -i <filename> [-e <epsilon>] [-c]\n-i\tInput filename\n-e\tEpsilon (optional, default e = 0.05)\n-c\tEnable CSV output" 1>&2; exit 1; }
 
-while getopts ":i:c" o; do
+while getopts ":i:e:c" o; do
 	case "${o}" in
 	i)
 		i=${OPTARG}
 		if [ ! -f "$i" ]
 		then
 			echo -e "${red}Input file \"$i\" not found!${nc}\n" 1>&2
+			usage
+		fi
+		;;
+	e)
+		e=${OPTARG}
+		if ! [[ $e =~ $rd ]] ; then
+			echo -e "${red}Epsilon must be a real number!${nc}\n" 1>&2
 			usage
 		fi
 		;;
@@ -39,7 +48,7 @@ K=`sed '2q;d' $i`	# Maximum cardinality
 tmp=`mktemp`
 echo "#define N $N" > $tmp
 echo "#define K $K" >> $tmp
-echo "#define INPUTFILE \"$i\"" >> $tmp
+echo "#define EPSILON $e" >> $tmp
 
 if [ ! -f instance.h ]
 then

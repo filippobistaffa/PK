@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
 		#endif
 	}
 
-	computekernel(x, 0, csbuf, nc, l, NULL, sp);
+	computekernel(x, EPSILON, csbuf, nc, l, NULL, sp);
 	printbuf(x, N, "x");
 
 	free(csbuf);
