@@ -112,19 +112,26 @@ int main(int argc, char *argv[]) {
 	printf("%u coalitions\n", nc);
 	meter *sp = createsp(seed);
 
+	// payoff vector
+	value *x = (value *)malloc(sizeof(value) * N);
+
 	for (agent i = 0; i < nc; i++) {
 		const value val = srvalue(csbuf + i * (K + 1), maskcount(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], dr), sp);
+		for (agent j = 0; j < csbuf[i * (K + 1)]; ++j)
+                        x[csbuf[i * (K + 1) + j + 1]] = -val / csbuf[i * (K + 1)];
 		#ifndef CSV
 		printbuf(csbuf + i * (K + 1) + 1, csbuf[i * (K + 1)], NULL, NULL, " = ");
 		printf("%.2f\n", val);
 		#endif
 	}
 
-	computekernel(NULL, 0, csbuf, nc, dr, NULL, sp);
+	computekernel(x, 0, csbuf, nc, dr, NULL, sp);
+	printbuf(x, N, "x");
 
 	free(csbuf);
 	free(adj);
 	free(sp);
+	free(x);
 
 	return 0;
 }
