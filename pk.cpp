@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 
 	// Read input file
 
-	FILE *f = fopen(INPUTFILE, "rt");
+	FILE *f = fopen(argv[1], "rt");
 	// Skip first 2 lines (N, K)
 	fgets(line, MAXLINE, f);
 	fgets(line, MAXLINE, f);

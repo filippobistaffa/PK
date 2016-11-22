@@ -70,5 +70,5 @@ if [[ $? == 0 ]]
 then
 	bin=$0
 	bin=${bin%???}
-	$bin
+	$bin $i
 fi
