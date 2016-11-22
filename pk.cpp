@@ -22,7 +22,7 @@ type vectorsum(const agent *r, agent n, const type *x) {
 }
 
 template <typename type>
-void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *l, type *data) {
+void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *dr, type *data) {
 
 	pkdata *pkd = (pkdata *)data;
 	register agent i, j, *t, *oc = c;
@@ -39,7 +39,7 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 		// dc = C' - C
 		agent dc[N];
 		differencesorted(pkd->csbuf + pkd->rev[*c] * (K + 1) + 1, pkd->csbuf[pkd->rev[*c] * (K + 1)],
-				 oc + 1, *oc, dc + 1, dc, l);
+				 oc + 1, *oc, dc + 1, dc, dr);
 		j = *dc;
 		t = dc + 1;
 
@@ -54,7 +54,7 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 }
 
 __attribute__((always_inline)) inline
-void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *l,
+void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *dr,
 		  const meter *sp) {
 
 	memset(nc, 0, sizeof(size_t) * N);
@@ -64,7 +64,7 @@ void creatematrix(value *sm, size_t *nc, const value *x, const edge *g, const ag
 			sm[i * N + j] = sm[j * N + i] = -INFINITY;
 
 	pkdata pkd = { .sm = sm, .x = x, .csbuf = csbuf, .rev = rev, .nc = nc, .sp = sp };
-	coalitions(g, updatesm, &pkd, K, l, 1);
+	coalitions(g, updatesm, &pkd, K, dr, 1);
 }
 
 
