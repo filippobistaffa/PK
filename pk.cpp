@@ -98,7 +98,7 @@ void computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, a
 		//it++;
 		creatematrix(sm, cc, x, g, csbuf, rev, l, sp);
 		//printf("CRC32 = %u\n", crc32(sm, sizeof(value) * N * N));
-		//printf("CRC32 = %u\n", crc32(cc, sizeof(value) * N));
+		//printf("CRC32 = %u\n", crc32(cc, sizeof(size_t) * N));
 		d = -INFINITY;
 		agent mi, mj;
 
