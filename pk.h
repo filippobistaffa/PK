@@ -4,7 +4,6 @@
 #include <sys/time.h>
 
 #include "instance.h"
-#include "params.h"
 #include "macros.h"
 #include "types.h"
 #include "coal.h"
