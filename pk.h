@@ -1,10 +1,7 @@
 #ifndef PK_H_
 #define PK_H_
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <sys/time.h>
+#include <sys/time.h>
 
 #include "instance.h"
 #include "params.h"
@@ -13,6 +10,7 @@
 #include "coal.h"
 
 #define C CEILBPC(N)
+#define MIND 1e-4
 
 #include "value.h"
 #include "io.h"

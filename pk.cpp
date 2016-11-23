@@ -24,14 +24,20 @@ type vectorsum(const agent *r, agent n, const type *x) {
 template <typename type>
 void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *l, type *data) {
 
+
 	pkdata *pkd = (pkdata *)data;
 	register agent i, j, *t, *oc = c;
 
 	// Value of current coalition
 	register value vc = srvalue(c, nl, pkd->sp);
 
+	//printbuf(c + 1, *c, NULL, NULL, " = ");
+	//printf("%.2f\n", vc);
+
 	// Excess of coalition
 	register value vmx = vc + vectorsum(c + 1, *c, pkd->x);
+	//printbuf(c + 1, *c, NULL, NULL, " = ");
+	//printf("%.2f\n", vmx);
 
 	if ((i = *(c++))) do {
 
@@ -67,7 +73,7 @@ void creatematrix(value *sm, size_t *cc, const value *x, const edge *g, const ag
 	coalitions(g, updatesm, &pkd, K, l, 1);
 }
 
-agent computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, agent nc, value val, const chunk *l,
+void computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, agent nc, value val, const chunk *l,
 		    const agent *deg, const meter *sp) {
 
 	agent *rev = (agent *)malloc(sizeof(agent) * N);
@@ -81,47 +87,45 @@ agent computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, 
 
 	for (agent i = 0; i < N; ++i) {
 		agent csing[] = { 1, i };
-		sing [i] = srvalue(csing, GET(l, i), sp);
+		sing[i] = srvalue(csing, GET(l, i), sp);
 	}
 
 	//printbuf(sing, N, "sing");
 	value *sm = (value *)malloc(sizeof(value) * N * N);
 	size_t *cc = (size_t *)malloc(sizeof(size_t) * N);
-	value d, t;
+	//size_t it = 0;
+	value d;
 
-	/*do {
-		it++;
-		//printf("%zu coalitions\n", CREATEMATRIX(sm, x, l, ai, sp));
-		count = creatematrix(sm, cc, x, g, csbuf, rev, l, sp);
-		//printf("CRC32 = %u\n", crc32(sm, sizeof(payoff) * N * N));
+	do {
+		//it++;
+		creatematrix(sm, cc, x, g, csbuf, rev, l, sp);
 		d = -INFINITY;
 		agent mi, mj;
-		value e;
 
 		for (agent i = 0; i < N; i++)
 			for (agent j = i + 1; j < N; j++) {
+				value t;
 				if (sm[i * N + j] == -INFINITY && sm[j * N + i] == -INFINITY) t = -INFINITY;
 				else t = sm[i * N + j] - sm[j * N + i];
 				if (t > d) { d = t; mi = i; mj = j; }
 			}
 
-		if ((e = x[mj] + sing[mj]) >= d / 2) e = d / 2;
+		value e = MAX(x[mj] + sing[mj], MIND);
+		if (e >= d / 2) e = d / 2;
 		x[mi] += e;
 		x[mj] -= e;
 
-	} while (d / val > epsilon);*/
+	} while (d / val > epsilon);
 
 	free(sing);
 	free(rev);
 	free(sm);
-
-	return 0;
+	free(cc);
 }
 
 int main(int argc, char *argv[]) {
 
 	// Read input file
-
 	FILE *f = fopen(argv[1], "rt");
 	// Skip first 2 lines (N, K)
 	fgets(line, MAXLINE, f);
@@ -141,7 +145,7 @@ int main(int argc, char *argv[]) {
 
 	puts("Adjacency matrix");
 	for (agent i = 0; i < N; i++)
-		printbuf(g + i * N, N, NULL, "% 3u");
+		printbuf(g + i * N, N, NULL, "% 2u");
 	puts("");
 
 	printf("%u coalitions\n", nc);
@@ -165,9 +169,12 @@ int main(int argc, char *argv[]) {
 		#endif
 	}
 
-	puts("");
+	struct timeval t1, t2;
+	gettimeofday(&t1, NULL);
 	computekernel(x, EPSILON, g, csbuf, nc, totval, l, NULL, sp);
-	printbuf(x, N, "x");
+	gettimeofday(&t2, NULL);
+	printbuf(x, N, "\nPayoff vector", "%.2f");
+	printf("Elapsed time = %f\n", (double)(t2.tv_usec - t1.tv_usec) / 1e6 + t2.tv_sec - t1.tv_sec);
 
 	free(csbuf);
 	free(sp);
