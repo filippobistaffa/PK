@@ -65,10 +65,33 @@ __attribute__((always_inline)) inline
 void creatematrix(value *sm, size_t *cc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *l,
 		  const meter *sp) {
 
-	memset(cc, 0, sizeof(size_t) * N);
-	std::fill_n(sm, N * N, -INFINITY);
-	pkdata pkd = { .sm = sm, .x = x, .csbuf = csbuf, .rev = rev, .cc = cc, .sp = sp };
-	coalitions(g, updatesm, &pkd, K, l, 1);
+	memset(cc, 0, sizeof(size_t) * N * CORES);
+	std::fill_n(sm, N * N * CORES, -INFINITY);
+	pkdata *pkd[CORES];
+
+	for (id t = 0; t < CORES; ++t) {
+		pkd[t] = (pkdata *)malloc(sizeof(pkdata));
+		pkd[t]->sm = sm + t * N * N;
+		pkd[t]->cc = cc + t * N;
+		pkd[t]->csbuf = csbuf;
+		pkd[t]->rev = rev;
+		pkd[t]->sp = sp;
+		pkd[t]->x = x;
+	}
+
+	parcoalitions(g, updatesm, pkd, K, l, 1);
+
+	for (agent i = 0; i < N; ++i)
+		for (agent j = 0; j < N; ++j)
+			for (id t = 1; t < CORES; ++t)
+				sm[i * N + j] = MAX(sm[i * N + j], sm[t * N * N + i * N + j]);
+
+	for (agent i = 0; i < N; ++i)
+		for (id t = 1; t < CORES; ++t)
+			cc[i] += cc[t * N + i];
+
+	for (id t = 0; t < CORES; ++t)
+		free(pkd[t]);
 }
 
 void computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, agent nc, value val, const chunk *l,
@@ -89,15 +112,16 @@ void computekernel(value *x, value epsilon, const edge *g, const agent *csbuf, a
 	}
 
 	//printbuf(sing, N, "sing");
-	value *sm = (value *)malloc(sizeof(value) * N * N);
-	size_t *cc = (size_t *)malloc(sizeof(size_t) * N);
+	value *sm = (value *)malloc(sizeof(value) * N * N * CORES);
+	size_t *cc = (size_t *)malloc(sizeof(size_t) * N * CORES);
 	//size_t it = 0;
 	value d;
 
 	do {
 		//it++;
 		creatematrix(sm, cc, x, g, csbuf, rev, l, sp);
-		printf("CRC32 = %u\n", crc32(sm, sizeof(value) * N * N));
+		//printf("CRC32 = %u\n", crc32(sm, sizeof(value) * N * N));
+		//printf("CRC32 = %u\n", crc32(cc, sizeof(size_t) * N));
 		d = -INFINITY;
 		agent mi, mj;
 
