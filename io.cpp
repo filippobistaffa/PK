@@ -32,7 +32,7 @@ edge readadj(agent *adj, FILE *f) {
 
 // Reads the solution coalition structure
 
-agent readcs(agent *csbuf, chunk *cars, FILE *f) {
+agent readcs(agent *csbuf, chunk *dr, FILE *f) {
 
 	agent ret = 0;
 
@@ -40,11 +40,14 @@ agent readcs(agent *csbuf, chunk *cars, FILE *f) {
 		*csbuf = 0;
 		char *pch = strtok(line, " ");
 		while (pch != NULL) {
+			bool isdr = false;
 			if (*pch == '*') {
-				SET(cars, ret);
+				isdr = true;
 				pch++;
 			}
-			csbuf[(*csbuf)++ + 1] = atoi(pch);
+			const agent i = atoi(pch);
+			csbuf[(*csbuf)++ + 1] = i;
+			if (isdr) SET(dr, i);
 			pch = strtok(NULL, " ");
 		}
 		csbuf += K + 1;
