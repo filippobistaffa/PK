@@ -59,16 +59,14 @@ void updatesm(agent *c, agent nl, const edge *g, const agent *adj, const chunk *
 	} while (--i);
 }
 
+#include <algorithm>
+
 __attribute__((always_inline)) inline
 void creatematrix(value *sm, size_t *cc, const value *x, const edge *g, const agent *csbuf, const agent *rev, const chunk *l,
 		  const meter *sp) {
 
 	memset(cc, 0, sizeof(size_t) * N);
-
-	for (agent i = 0; i < N; i++)
-		for (agent j = i; j < N; j++)
-			sm[i * N + j] = sm[j * N + i] = -INFINITY;
-
+	std::fill_n(sm, N * N, -INFINITY);
 	pkdata pkd = { .sm = sm, .x = x, .csbuf = csbuf, .rev = rev, .cc = cc, .sp = sp };
 	coalitions(g, updatesm, &pkd, K, l, 1);
 }
