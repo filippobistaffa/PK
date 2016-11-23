@@ -6,9 +6,9 @@ nc='\033[0m'				# No color
 re='^[0-9]+$'				# Regular expression to detect natural numbers
 rd='^[0-9]+\.?[0-9]*$'			# Regular expression to detect real numbers
 
-usage() { echo -e "Usage: $0 -i <filename> [-e <epsilon>] [-c]\n-i\tInput filename\n-e\tEpsilon (optional, default e = 0.05)\n-c\tEnable CSV output" 1>&2; exit 1; }
+usage() { echo -e "Usage: $0 -i <filename> [-e <epsilon>]\n-i\tInput filename\n-e\tEpsilon (optional, default e = 0.05)" 1>&2; exit 1; }
 
-while getopts ":i:e:c" o; do
+while getopts ":i:e" o; do
 	case "${o}" in
 	i)
 		i=${OPTARG}
@@ -24,9 +24,6 @@ while getopts ":i:e:c" o; do
 			echo -e "${red}Epsilon must be a real number!${nc}\n" 1>&2
 			usage
 		fi
-		;;
-	c)
-		c=1
 		;;
 	\?)
 		echo -e "${red}-$OPTARG is not a valid option!${nc}\n" 1>&2
