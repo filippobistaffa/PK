@@ -24,9 +24,7 @@ Input File Format
   * `N` (i.e., the number of agents) in the first line.
   * `K` (i.e., the maximum coalition cardinality) in the second line.
   * `SEED` (i.e., the seed used to generate the pseudo-random SR instance) in the third line.
-  * `N` lines, each containing the list of the neighbours of the i<sup>th</sup> agent in the graph. Specifically, each line must be formatted in the following way.
-	  * First number is the agent's degree *d* in the graph
-	  * The following *d* numbers are the indices of the agent's neighbours in the graph
+  * `N` lines representing the adjacency matrix of the graph (each edge should be associated to a natural number ≠ 0).
   * `M` lines representing the `M` coalitions in the solution coalition structure. Each line must contain the coalition's members. Drivers must be marked by preceding their indices with `*` (e.g., `*0` means that `0` is a driver).
 
 The following example file represents a solution of the instance with `SEED` = 47, `K` = 5, and with the following graph.
@@ -37,16 +35,16 @@ The solution coalition structure is `{{9},{6},{2},{7,0,1,3,8},{4},{5}}`, where `
 10
 5
 47
-6 7 1 2 3 4 8
-6 0 2 3 4 5 6
-4 0 1 6 9
-3 0 1 8
-5 7 0 1 5 9
-2 1 4
-2 1 2
-2 0 4
-2 0 3
-2 2 4
+0 1 2 5 7 0 0 13 15 0
+1 0 3 4 6 8 11 0 0 0
+2 3 0 0 0 0 10 0 0 17
+5 4 0 0 0 0 0 0 14 0
+7 6 0 0 0 9 0 12 0 16
+0 8 0 0 9 0 0 0 0 0
+0 11 10 0 0 0 0 0 0 0
+13 0 0 0 12 0 0 0 0 0
+15 0 0 14 0 0 0 0 0 0
+0 0 17 0 16 0 0 0 0 0
 9
 6
 2
