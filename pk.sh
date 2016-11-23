@@ -46,6 +46,7 @@ tmp=`mktemp`
 echo "#define N $N" > $tmp
 echo "#define K $K" >> $tmp
 echo "#define EPSILON $e" >> $tmp
+echo "#define CORES `grep -c ^processor /proc/cpuinfo`" >> $tmp
 
 if [ ! -f instance.h ]
 then
