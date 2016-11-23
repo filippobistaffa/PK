@@ -13,6 +13,7 @@
 #define MIND 1e-4
 
 #include "value.h"
+#include "crc32.h"
 #include "io.h"
 #include "sp.h"
 

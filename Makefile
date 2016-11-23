@@ -46,7 +46,7 @@ all: pk
 
 -include ${DEPSUBDIR}/*.d
 
-pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o ${COBJSUBDIR}/value.o
+pk: ${COBJSUBDIR}/pk.o ${COBJSUBDIR}/io.o ${COBJSUBDIR}/sp.o ${COBJSUBDIR}/value.o ${COBJSUBDIR}/crc32.o
 	@${ECHOLD} pk
 	@${CMP} ${OPT} $^ ${LINK} -o ${OUT}
 
@@ -60,6 +60,9 @@ ${COBJSUBDIR}/value.o: value.cpp
 	@$(compilec)
 
 ${COBJSUBDIR}/pk.o: pk.cpp
+	@$(compilec)
+
+${COBJSUBDIR}/crc32.o: crc32.c
 	@$(compilec)
 
 clean:
